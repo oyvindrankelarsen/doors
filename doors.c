@@ -6,6 +6,8 @@
 #include "safeinput.h"
 #include "menu.h"
 
+
+
 // const double pi = 3.1415927;
 // #define  pi 3.1415927
 
@@ -60,7 +62,7 @@ void InputCard(Card *p)
     t = time(NULL);
     tm = localtime(&t);
     strftime(str_date, sizeof(str_date), "%Y-%m-%d", tm);
-    strcpy((p->dateAdded), str_date);
+    strcpy(p->dateAdded, str_date);
 }
 // Lista ALLA kortnummer och skriv om dom har access eller INTE
 // (1212 har access, 1213 har nekats samt DATUM när dom lades till i systemet, Added to the system: )
@@ -79,8 +81,9 @@ void ListAllCards(CardLista *state)
 
 void PrintCard(Card *p)
 {
-    printf(" %d\n", p->cardNumber);
-    printf(" %d\n", p->hasAccess);
+    printf("%d", p->cardNumber);
+    (p->hasAccess) ? printf(" Access   ") : printf(" No Access");
+    printf(" %s\n", p->dateAdded);
 }
 
 // Dörren ska vara öppen (grön lampa) i 3 sekunder
