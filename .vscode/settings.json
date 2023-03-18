@@ -1,0 +1,14 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "d:\\OneDrive\\C\\ASPCode.net Student Portal\\Inlamningsuppgift\\Administrationssystem d�rr",
+            "binaryPath": "d:\\OneDrive\\C\\ASPCode.net Student Portal\\Inlamningsuppgift\\Administrationssystem d�rr\\doors.exe",
+            "binaryArgs": []
+        },
+        {
+            "cwd": "d:\\OneDrive\\C\\ASPCode.net Student Portal\\Inlamningsuppgift\\doors",
+            "binaryPath": "d:\\OneDrive\\C\\ASPCode.net Student Portal\\Inlamningsuppgift\\doors\\doors.exe",
+            "binaryArgs": []
+        }
+    ]
+}
