@@ -4,6 +4,9 @@
 #include <time.h>
 #include "doors.h"
 #include "safeinput.h"
+#include <Windows.h>
+
+#define LAMP "CURRENTLY LAMP IS: "
 
 // const double pi = 3.1415927;
 // #define
@@ -26,14 +29,13 @@ void AddRemoveAccess(CardLista *state)
         printf("2. List logged in\n");
         printf("3. List all\n");
         printf("4. Add/remove access\n");
-        printf("5. Back\n");
+        printf("5. Back\n"); // två gånger 5 för huvudmeny
 
         int sel = 0;
 
         GetInputInt("Ange val:", &sel);
         if (sel == 1)
-            puts("re");
-        // RemoteOpen(& (state->cards->cardNumber) );
+            RemoteOpen(state);
         else if (sel == 2)
             ListLoggedIn(state);
         else if (sel == 3)
@@ -49,46 +51,43 @@ void AddRemoveAccess(CardLista *state)
 void CardExists(CardLista *state)
 {
     int cardNo, sel = 0;
-    GetInputInt("Enter cardnumber:\n", &cardNo);
+    GetInputInt("Enter cardnumber:", &cardNo);
 
     if (state->antal > 0)
     {
-        // printf("\nThis card has ");
         Card *p;
-        /*if ( &state->cards[cardNo].hasAccess == 1)//p->hasAccess
-            printf(" Access    ");
-        else
-            printf(" No Access ");
-
-
-        */
         for (int i = 0; i < state->antal; i++)
         {
             if (state->cards[i].cardNumber == cardNo)
+            {
                 p = &state->cards[i];
+                GetInputInt("\nEnter 1 for access, 2 for no access", &sel);
+                if (sel == 1)
+                    p->hasAccess = 1;
+                else
+                    p->hasAccess = 0;
+            }
+            else
+            {
+                printf("\nThe card is not added to the system\n");
+                GetInputInt("Enter 1 to add a card, 2 to go back to menu:", &sel);
+                if (sel == 1)
+                    CreateCard(state);
+                else if (sel == 2)
+                    AddRemoveAccess(state);
+            }
         }
-
-        printf("\nEnter 1 for access, 2 for no access");
-        GetInputInt("Ange val:", &sel);
-
-        if (sel == 1)
-            p->hasAccess = 1; 
-        else
-            p->hasAccess = 0;
     }
     else
     {
-        printf("\nThe card is not added to the system");
+        printf("\nNo card in the system\n\n");
+        GetInputInt("Enter 1 to add a card, 2 to go back to menu:", &sel);
+        if (sel == 1)
+            CreateCard(state);
+        else if (sel == 2)
+            AddRemoveAccess(state);
     }
-
-    printf("\nEnter 1 to add a card, 2 to go back to menu");
-    GetInputInt("Ange val:", &sel);
-    if (sel == 1)
-        CreateCard(state);
-    else if (sel == 2)
-        AddRemoveAccess(state);
 }
-
 void CreateCard(CardLista *state)
 {
     //    employee -> sist i arrayen
@@ -114,8 +113,15 @@ void FakeScan(CardLista *state)
 // lägg in 1212 has access, 1213 No access
 void InputCard(Card *p)
 {
+    int sel = 0;
     GetInputInt("New cardnumber:\n", &(p->cardNumber));
-    GetInputInt("Has access?: 0 or 1:\n", &(p->hasAccess));
+
+    GetInputInt("\nEnter 1 for access, 2 for no access", &sel);
+    if (sel == 1)
+        p->hasAccess = 1;
+    else
+        p->hasAccess = 0;
+
     struct tm *tm;
     time_t t;
     char str_date[100];
@@ -158,7 +164,9 @@ void PrintCard(Card *p)
 // Dörren ska vara öppen (grön lampa) i 3 sekunder
 void RemoteOpen(CardLista *state)
 {
-    printf("Remote open");
+    printf("%sGreen\n", LAMP);
+    Sleep(3000);
+    printf("%sRed\n", LAMP);
 }
 
 int main()
@@ -187,8 +195,7 @@ int main()
 
         GetInputInt("Ange val:", &sel);
         if (sel == 1)
-            puts("re");
-        // RemoteOpen(&state);
+            RemoteOpen(&state);
         else if (sel == 2)
             ListAllCards(&state);
         else if (sel == 3)

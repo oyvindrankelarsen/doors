@@ -1,6 +1,4 @@
 PROG=doors.exe
-clean :
-       -del *.exe
 CC=gcc -std=c99
 CFLAGS=-g -Wall 
 
