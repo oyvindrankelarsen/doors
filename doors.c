@@ -51,36 +51,36 @@ void CardExists(CardLista *state)
     int cardNo, sel = 0;
     GetInputInt("Enter cardnumber:\n", &cardNo);
 
-    if (state->antal != 0)
+    if (state->antal > 0)
     {
-    printf("\nThis card has ");
-    Card *p = &state->cards[cardNo];
-    
-        if (p->hasAccess == 1)
+        // printf("\nThis card has ");
+        Card *p;
+        /*if ( &state->cards[cardNo].hasAccess == 1)//p->hasAccess
             printf(" Access    ");
         else
             printf(" No Access ");
-    }
-    else{
-        printf("The card is not added to the system");
-    }
-    /*
 
-            for (int i = 0; i < state->antal; i++)
-            {
-                if (state->cards[i].cardNumber == cardNo)
-                {
-                    printf("\nEnter 1 for access, 2 for no access");
-                    GetInputInt("Ange val:", &sel);
 
-                    if (sel == 1)
-                        state->cards[i].hasAccess = 1;
-                    else
-                        state->cards[i].hasAccess = 0;
-                }
-            }
-        }
         */
+        for (int i = 0; i < state->antal; i++)
+        {
+            if (state->cards[i].cardNumber == cardNo)
+                p = &state->cards[i];
+        }
+
+        printf("\nEnter 1 for access, 2 for no access");
+        GetInputInt("Ange val:", &sel);
+
+        if (sel == 1)
+            p->hasAccess = 1; 
+        else
+            p->hasAccess = 0;
+    }
+    else
+    {
+        printf("\nThe card is not added to the system");
+    }
+
     printf("\nEnter 1 to add a card, 2 to go back to menu");
     GetInputInt("Ange val:", &sel);
     if (sel == 1)
@@ -88,6 +88,7 @@ void CardExists(CardLista *state)
     else if (sel == 2)
         AddRemoveAccess(state);
 }
+
 void CreateCard(CardLista *state)
 {
     //    employee -> sist i arrayen
@@ -117,7 +118,7 @@ void InputCard(Card *p)
     GetInputInt("Has access?: 0 or 1:\n", &(p->hasAccess));
     struct tm *tm;
     time_t t;
-    char str_date[100]; // HÄR ligger datumet rätt formaterat i de 10 första tecknen följt av null
+    char str_date[100];
     t = time(NULL);
     tm = localtime(&t);
     strftime(str_date, sizeof(str_date), "%Y-%m-%d", tm);
@@ -132,7 +133,7 @@ void ListAllCards(CardLista *state)
         PrintCard(&state->cards[i]);
     }
     if (state->antal == 0)
-        printf("No card in the system\n");
+        printf("No card in the system\n\n");
 }
 
 void ListLoggedIn(CardLista *state)
