@@ -18,7 +18,6 @@ typedef struct
 
 #endif
 
-void Access(CardLista *state);
 void AddRemoveAccessMenu(CardLista *state);
 void AdminMenu(CardLista *state);
 void AddRemoveAccess(CardLista *state);

@@ -79,11 +79,11 @@ void AdminMenu(CardLista *state)
     }
 }
 
-void AddRemoveAccess(CardLista *state)
+void AddRemoveAccess(CardLista *state) //uppdatera access funkar inte
 {
 
     Card *p;
-    int cardNo = 0, sel=0;
+    int cardNo = 0, sel = 0;
     GetInputInt("(AddRemoveAccess)Enter cardnumber:", &cardNo);
     // Finns kortet?
     for (int i = 0; i < state->antal; i++)
@@ -110,61 +110,11 @@ void AddRemoveAccess(CardLista *state)
         CreateCard(state);
     else if (sel == 2)
         AddRemoveAccessMenu(state);
-
-    /*
-        int cardNo, sel = 0;
-        if (state->antal > 0)
-        {
-            if (1)
-            {
-                Card *p;
-                GetInputInt("(CardExists)Enter cardnumber:", &cardNo);
-                for (int i = 0; i < state->antal; i++)
-                {
-
-                    if (state->cards[i].cardNumber == cardNo)
-                    {
-                        p = &state->cards[i];
-                        printf("This card ");
-                        (p->hasAccess) ? printf(" Access    ") : printf(" No Access ");
-                        GetInputInt("\n(CardExistsTrue)Enter 1 for access, 2 for no access ", &sel);
-                        if (sel == 1)
-                            p->hasAccess = 1;
-                        else
-                            p->hasAccess = 0;
-                    }
-
-                    printf("\nThe card is not added to the system\n");
-                    GetInputInt("((CardExistsFalse))Enter 1 to add a card, 2 to go back to menu:", &sel);
-                    if (sel == 1)
-                        CreateCard(state);
-                    else if (sel == 2)
-                        AddRemoveAccessMenu(state);
-                }
-            }
-
-        }
-        else
-        {
-            printf("\nNo card in the system\n");
-            GetInputInt("Enter 1 to add a card, 2 to go back to menu: ", &sel);
-            if (sel == 1)
-                CreateCard(state);
-            else if (sel == 2)
-                AddRemoveAccessMenu(state);
-        }
-        */
 }
 void CreateCard(CardLista *state)
 {
-    //    employee -> sist i arrayen
-    //    antal + 1
-
-    // state->employees 9850
-    // state->antal =2
-    // state->antal = state->antal + 1;
     state->antal++;
-    if (state->antal == 1) // DEN FÖRSTA NÅNSIN  Employee = 150
+    if (state->antal == 1)
         state->cards = (Card *)malloc(1 * sizeof(Card));
     else
         state->cards = (Card *)realloc(state->cards, state->antal * sizeof(Card));
@@ -174,10 +124,34 @@ void CreateCard(CardLista *state)
 
 void FakeScan(CardLista *state)
 {
-    printf("FakeScan");
+
+    printf("Please scan card to enter or X to go back to menu\n");
+    printf("%sOff", LAMP);
+    int cardNo;
+    Card *p;
+    GetInputInt("\n", &cardNo);
+
+    // Finns kortet?
+    for (int i = 0; i < state->antal; i++)
+    {
+        if (state->cards[i].cardNumber == cardNo)
+        {
+            p = &state->cards[i];
+            printf("%d", state->cards[i].cardNumber);
+            if (p->hasAccess)
+            {
+                p->isLoggedIn = 1;
+                printf("%sGreen\n", LAMP);
+            }
+            else
+            {
+                p->isLoggedIn = 0;
+                printf("%sRed\n", LAMP);
+            }
+        }
+    }
 }
 
-// lägg in 1212 has access, 1213 No access
 void InputCard(Card *p, CardLista *state)
 {
     int sel = 0;
@@ -219,7 +193,6 @@ void ListLoggedIn(CardLista *state)
             PrintCard(&state->cards[i]);
     }
 
-    printf("No card logged in\n");
 }
 
 void PrintCard(Card *p)
@@ -236,20 +209,12 @@ void RemoteOpen(CardLista *state)
     printf("%sRed\n", LAMP);
 }
 
-int main()
+int main(void)
 {
-    /*
-  Att tänka på:
-  - buffer overflow (inmatning) - GetInput - kontroll char namn[10] -> 20 ->  IG
-  - stack overflow (flöde)   -> meny -> add -> meny  lösningen loopar + return
-  - inga globala variabler ABSOLUT KRAV -> IG
-  */
-
     CardLista state;
     state.cards = NULL;
     state.antal = 0;
     AdminMenu(&state);
-
     free(state.cards);
     return 0;
 }
