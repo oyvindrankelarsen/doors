@@ -19,11 +19,12 @@ typedef struct
 #endif
 
 void Access(CardLista *state);
+void AddRemoveAccessMenu(CardLista *state);
+void AdminMenu(CardLista *state);
 void AddRemoveAccess(CardLista *state);
-void CardExists(CardLista *state);
 void CreateCard(CardLista *state);
 void FakeScan(CardLista *state);
-void InputCard(Card *p);
+void InputCard(Card *p, CardLista *state);
 void ListAllCards(CardLista *state);
 void ListLoggedIn(CardLista *state);
 void PrintCard(Card *p);
