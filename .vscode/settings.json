@@ -10,5 +10,8 @@
             "binaryPath": "d:\\OneDrive\\C\\ASPCode.net Student Portal\\Inlamningsuppgift\\doors\\doors.exe",
             "binaryArgs": []
         }
-    ]
+    ],
+    "files.associations": {
+        "windows.h": "c"
+    }
 }

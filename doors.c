@@ -8,20 +8,6 @@
 
 #define LAMP "CURRENTLY LAMP IS: "
 
-// const double pi = 3.1415927;
-// #define
-
-// 2. titta på en struct i runtime struct tm (time)
-// allokera malloc realloc free
-
-// ADD REMOVE access
-/*
-void Access(CardLista *state)
-{
-    AddRemoveAccess(state);
-}
-*/
-
 void AddRemoveAccessMenu(CardLista *state)
 {
     while (1)
@@ -35,7 +21,7 @@ void AddRemoveAccessMenu(CardLista *state)
 
         int sel = 0;
 
-        GetInputInt("Ange val:", &sel);
+        GetInputInt("Enter:", &sel);
         if (sel == 1)
             RemoteOpen(state);
         else if (sel == 2)
@@ -46,6 +32,8 @@ void AddRemoveAccessMenu(CardLista *state)
             AddRemoveAccess(state);
         else if (sel == 5)
             AdminMenu(state);
+        else
+            printf("Please choose a number from the menu\n\n");
     }
     // skriv till fil
 }
@@ -62,7 +50,7 @@ void AdminMenu(CardLista *state)
         printf("9. FAKE TEST SCAN CARD\n"); // kvar
 
         int sel = 0;
-        GetInputInt("Ange val:", &sel);
+        GetInputInt("Enter:", &sel);
         if (sel == 1)
             RemoteOpen(state);
         else if (sel == 2)
@@ -72,26 +60,29 @@ void AdminMenu(CardLista *state)
         else if (sel == 4)
         {
             // skriv till fil
+            WriteCardsFile(state);
             exit(0);
         }
         else if (sel == 9)
             FakeScan(state);
+        else
+            printf("Please choose a number from the menu\n\n");
     }
 }
 
-void AddRemoveAccess(CardLista *state) //uppdatera access funkar inte
+void AddRemoveAccess(CardLista *state)
 {
-
     Card *p;
     int cardNo = 0, sel = 0;
     GetInputInt("(AddRemoveAccess)Enter cardnumber:", &cardNo);
+
     // Finns kortet?
     for (int i = 0; i < state->antal; i++)
     {
         if (state->cards[i].cardNumber == cardNo)
         {
             p = &state->cards[i];
-            printf("kortnr %d", state->cards[i].cardNumber);
+            printf("%d", state->cards[i].cardNumber);
             printf("This card has ");
             (p->hasAccess) ? printf(" access    ") : printf(" no Access ");
             int sel = 0;
@@ -111,6 +102,7 @@ void AddRemoveAccess(CardLista *state) //uppdatera access funkar inte
     else if (sel == 2)
         AddRemoveAccessMenu(state);
 }
+
 void CreateCard(CardLista *state)
 {
     state->antal++;
@@ -124,7 +116,6 @@ void CreateCard(CardLista *state)
 
 void FakeScan(CardLista *state)
 {
-
     printf("Please scan card to enter or X to go back to menu\n");
     printf("%sOff", LAMP);
     int cardNo;
@@ -156,8 +147,8 @@ void InputCard(Card *p, CardLista *state)
 {
     int sel = 0;
     GetInputInt("(Input card)New cardnumber:\n", &(p->cardNumber));
-
     GetInputInt("(Input card)Enter 1 for access, 2 for no access ", &sel);
+
     if (sel == 1)
         p->hasAccess = 1;
     else
@@ -175,24 +166,26 @@ void InputCard(Card *p, CardLista *state)
 
 void ListAllCards(CardLista *state)
 {
-    printf("Listing all cards\n*******************\n");
+    printf("\nListing all cards\n*******************\n");
     for (int i = 0; i < state->antal; i++)
     {
         PrintCard(&state->cards[i]);
     }
+
     if (state->antal == 0)
         printf("No card in the system\n\n");
+    printf("Press key to continue");
+    _getch();
 }
 
 void ListLoggedIn(CardLista *state)
 {
-    printf("Listing logged in cards\n*******************\n");
+    printf("\nListing logged in cards\n*******************\n");
     for (int i = 0; i < state->antal; i++)
     {
         if (state->cards[i].isLoggedIn != 0)
             PrintCard(&state->cards[i]);
     }
-
 }
 
 void PrintCard(Card *p)
@@ -202,6 +195,24 @@ void PrintCard(Card *p)
     printf("Added to the system: %s\n", p->dateAdded);
 }
 
+void ReadCardsFile(CardLista *state) // kass
+{
+    FILE *f = fopen("cards.bin", "rb");
+    state->antal++;
+    state->cards = (Card *)malloc(1 * sizeof(Card));
+    int i = 0;
+
+    while (fread(&state->cards[i], sizeof(Card), 1, f))
+    {
+        printf("%d\n", state->cards[i].cardNumber);
+        state->antal++;
+        state->cards = (Card *)realloc(state->cards, state->antal * sizeof(Card));
+        i++;
+    }
+    fclose(f);
+    state->antal--;
+}
+
 void RemoteOpen(CardLista *state)
 {
     printf("%sGreen\n", LAMP);
@@ -209,11 +220,24 @@ void RemoteOpen(CardLista *state)
     printf("%sRed\n", LAMP);
 }
 
+void WriteCardsFile(CardLista *state)
+{
+    FILE *f = fopen("cards.bin", "wb");
+    for (int i = 0; i < state->antal; i++)
+    {
+        fwrite(&state->cards[i], sizeof(Card), 1, f);
+    }
+    fclose(f);
+}
+
 int main(void)
 {
     CardLista state;
     state.cards = NULL;
     state.antal = 0;
+
+    ReadCardsFile(&state);
+
     AdminMenu(&state);
     free(state.cards);
     return 0;

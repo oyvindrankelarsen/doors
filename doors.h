@@ -27,4 +27,6 @@ void InputCard(Card *p, CardLista *state);
 void ListAllCards(CardLista *state);
 void ListLoggedIn(CardLista *state);
 void PrintCard(Card *p);
+void ReadCardsFile(CardLista *state);
 void RemoteOpen(CardLista *state);
+void WriteCardsFile(CardLista *state);
