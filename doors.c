@@ -17,7 +17,7 @@ void AddRemoveAccessMenu(CardLista *state)
         printf("2. List logged in\n");
         printf("3. List all\n");
         printf("4. Add/remove access\n");
-        printf("5. Back\n"); // två gånger 5 för huvudmeny
+        printf("5. Back\n");
 
         int sel = 0;
 
@@ -35,7 +35,6 @@ void AddRemoveAccessMenu(CardLista *state)
         else
             printf("Please choose a number from the menu\n\n");
     }
-    // skriv till fil
 }
 
 void AdminMenu(CardLista *state)
@@ -45,9 +44,9 @@ void AdminMenu(CardLista *state)
         printf("Admin menu\n");
         printf("1. Remote open door\n");
         printf("2. List all cards in system\n");
-        printf("3. Add/remove access\n"); // kvar
+        printf("3. Add/remove access\n");
         printf("4. Exit\n");
-        printf("9. FAKE TEST SCAN CARD\n"); // kvar
+        printf("9. FAKE TEST SCAN CARD\n");
 
         int sel = 0;
         GetInputInt("Enter:", &sel);
@@ -59,7 +58,6 @@ void AdminMenu(CardLista *state)
             AddRemoveAccessMenu(state);
         else if (sel == 4)
         {
-            // skriv till fil
             WriteCardsFile(state);
             exit(0);
         }
@@ -76,7 +74,6 @@ void AddRemoveAccess(CardLista *state)
     int cardNo = 0, sel = 0;
     GetInputInt("(AddRemoveAccess)Enter cardnumber:", &cardNo);
 
-    // Finns kortet?
     for (int i = 0; i < state->antal; i++)
     {
         if (state->cards[i].cardNumber == cardNo)
@@ -122,7 +119,6 @@ void FakeScan(CardLista *state)
     Card *p;
     GetInputInt("\n", &cardNo);
 
-    // Finns kortet?
     for (int i = 0; i < state->antal; i++)
     {
         if (state->cards[i].cardNumber == cardNo)
@@ -195,7 +191,7 @@ void PrintCard(Card *p)
     printf("Added to the system: %s\n", p->dateAdded);
 }
 
-void ReadCardsFile(CardLista *state) // kass
+void ReadCardsFile(CardLista *state)
 {
     FILE *f = fopen("cards.bin", "rb");
     state->antal++;
