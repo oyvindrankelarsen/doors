@@ -1,7 +1,9 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <Windows.h>
 #include "doors.h"
 #include "safeinput.h"
 #include <Windows.h>
@@ -12,7 +14,7 @@ void AddRemoveAccessMenu(CardLista *state)
 {
     while (1)
     {
-        printf("\nAdd/remove access menu *******************\n");
+        printf("\nAdd/remove access menu \n");
         printf("1. Remote open door\n");
         printf("2. List logged in\n");
         printf("3. List all\n");
@@ -33,7 +35,7 @@ void AddRemoveAccessMenu(CardLista *state)
         else if (sel == 5)
             AdminMenu(state);
         else
-            printf("Please choose a number from the menu\n\n");
+            printf("Please choose a number from the menu\n");
     }
 }
 
@@ -64,15 +66,19 @@ void AdminMenu(CardLista *state)
         else if (sel == 9)
             FakeScan(state);
         else
-            printf("Please choose a number from the menu\n\n");
+            printf("Please choose a number from the menu\n");
     }
 }
 
 void AddRemoveAccess(CardLista *state)
 {
     Card *p;
-    int cardNo = 0, sel = 0;
-    GetInputInt("(AddRemoveAccess)Enter cardnumber:", &cardNo);
+    int cardNo = 0, sel = 0, loop = 1;
+
+    while (!(GetInputInt("Enter cardnumber:", &cardNo)))
+    {
+        printf("Please enter only digits\n");
+    }
 
     for (int i = 0; i < state->antal; i++)
     {
@@ -80,24 +86,49 @@ void AddRemoveAccess(CardLista *state)
         {
             p = &state->cards[i];
             printf("%d", state->cards[i].cardNumber);
-            printf("This card has ");
-            (p->hasAccess) ? printf(" access    ") : printf(" no Access ");
+            printf("\nThis card has ");
+            (p->hasAccess) ? printf("access ") : printf("no Access ");
             int sel = 0;
-            GetInputInt("\n(AddRemoveAccess2)Enter 1 for access, 2 for no access ", &sel);
-            if (sel == 1)
-                p->hasAccess = 1;
-            else
-                p->hasAccess = 0;
-            AddRemoveAccessMenu(state);
+            while (loop)
+            {
+                GetInputInt("\nEnter 1 for access, 2 for no access ", &sel);
+                if (sel == 1)
+                {
+                    p->hasAccess = 1;
+                    AddRemoveAccessMenu(state);
+                    loop = 0;
+                }
+                if (sel == 2)
+                {
+                    p->hasAccess = 0;
+                    AddRemoveAccessMenu(state);
+                    loop = 0;
+                }
+                else
+                    printf("Please choose a number from the menu\n");
+            }
         }
     }
 
     printf("\nThe card is not added to the system\n");
-    GetInputInt("((CardExistsFalse))Enter 1 to add a card, 2 to go back to menu:", &sel);
-    if (sel == 1)
-        CreateCard(state);
-    else if (sel == 2)
-        AddRemoveAccessMenu(state);
+
+    while (loop)
+    {
+        if (!(GetInputInt("Enter 1 to add a card, 2 to go back to menu:", &sel)))
+            printf("Please enter only digits from the menu\n");
+        if (sel == 1)
+        {
+            CreateCard(state);
+            loop = 0;
+        }
+        if (sel == 2)
+        {
+            AddRemoveAccessMenu(state);
+            loop = 0;
+        }
+        else
+            printf("Please enter only digits from the menu\n");
+    }
 }
 
 void CreateCard(CardLista *state)
@@ -113,18 +144,36 @@ void CreateCard(CardLista *state)
 
 void FakeScan(CardLista *state)
 {
+    int cardNo = 0, loop = 1;
+    Card *p;
+    char c[10];
     printf("Please scan card to enter or X to go back to menu\n");
     printf("%sOff", LAMP);
-    int cardNo;
-    Card *p;
-    GetInputInt("\n", &cardNo);
+    GetInput("\n", c, sizeof(c));
+
+    while (loop)
+    {
+        if (c[0] == 'X') // först kolla X
+        {
+            AdminMenu(state);
+            loop = 0;
+        }
+        else
+        {
+            cardNo = atoi(c);
+            loop = 0;
+        }
+    }
+    //  while (!(GetInputInt("\n", &cardNo)))
+    //  {
+    //      printf("Please enter only digits\n");
+    //  }
 
     for (int i = 0; i < state->antal; i++)
     {
         if (state->cards[i].cardNumber == cardNo)
         {
             p = &state->cards[i];
-            printf("%d", state->cards[i].cardNumber);
             if (p->hasAccess)
             {
                 p->isLoggedIn = 1;
@@ -141,14 +190,30 @@ void FakeScan(CardLista *state)
 
 void InputCard(Card *p, CardLista *state)
 {
-    int sel = 0;
-    GetInputInt("(Input card)New cardnumber:\n", &(p->cardNumber));
-    GetInputInt("(Input card)Enter 1 for access, 2 for no access ", &sel);
+    int sel = 0, loop = 1;
 
-    if (sel == 1)
-        p->hasAccess = 1;
-    else
-        p->hasAccess = 0;
+    while (!(GetInputInt("New cardnumber:\n", &(p->cardNumber))))
+    {
+        printf("Please enter only digits\n");
+    }
+
+    while (loop)
+    {
+        if (!(GetInputInt("Enter 1 for access, 2 for no access ", &sel)))
+            printf("Please enter only digits from the menu\n");
+        if (sel == 1)
+        {
+            p->hasAccess = 1;
+            loop = 0;
+        }
+        if (sel == 2)
+        {
+            p->hasAccess = 0;
+            loop = 0;
+        }
+        else
+            printf("Please enter only digits from the menu\n");
+    }
 
     struct tm *tm;
     time_t t;
@@ -162,45 +227,55 @@ void InputCard(Card *p, CardLista *state)
 
 void ListAllCards(CardLista *state)
 {
-    printf("\nListing all cards\n*******************\n");
-    for (int i = 0; i < state->antal; i++)
-    {
-        PrintCard(&state->cards[i]);
-    }
-
     if (state->antal == 0)
         printf("No card in the system\n\n");
-    printf("Press key to continue");
+    else
+    {
+        printf("\nAll cards in the system\n");
+        for (int i = 0; i < state->antal; i++)
+        {
+            PrintCard(&state->cards[i]);
+        }
+    }
+
+    printf("Press key to continue\n");
     _getch();
 }
 
 void ListLoggedIn(CardLista *state)
 {
-    printf("\nListing logged in cards\n*******************\n");
-    for (int i = 0; i < state->antal; i++)
+    int i = 1;
+    printf("\nListing logged in cards\n");
+    for (i = 0; i < state->antal; i++)
     {
-        if (state->cards[i].isLoggedIn != 0)
+        if (state->cards[i].isLoggedIn == 1)
             PrintCard(&state->cards[i]);
     }
+    if (state->cards[i].isLoggedIn == 0)
+        printf("No logged in cards\n");
 }
 
 void PrintCard(Card *p)
 {
-    printf(" %d", p->cardNumber);
-    (p->hasAccess) ? printf(" Access    ") : printf(" No Access ");
+    printf("%d", p->cardNumber);
+    (p->hasAccess) ? printf(" Access ") : printf(" No Access ");
     printf("Added to the system: %s\n", p->dateAdded);
 }
 
 void ReadCardsFile(CardLista *state)
 {
     FILE *f = fopen("cards.bin", "rb");
+    if (!f)
+    {
+        printf("Could not read cards from file\n");
+        return;
+    }
     state->antal++;
     state->cards = (Card *)malloc(1 * sizeof(Card));
     int i = 0;
 
     while (fread(&state->cards[i], sizeof(Card), 1, f))
     {
-        printf("%d\n", state->cards[i].cardNumber);
         state->antal++;
         state->cards = (Card *)realloc(state->cards, state->antal * sizeof(Card));
         i++;
@@ -219,6 +294,11 @@ void RemoteOpen(CardLista *state)
 void WriteCardsFile(CardLista *state)
 {
     FILE *f = fopen("cards.bin", "wb");
+    if (!f)
+    {
+        printf("Could not save cards in file\n");
+        exit(1);
+    }
     for (int i = 0; i < state->antal; i++)
     {
         fwrite(&state->cards[i], sizeof(Card), 1, f);
