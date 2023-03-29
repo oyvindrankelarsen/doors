@@ -6,7 +6,7 @@
 #include <Windows.h>
 #include "doors.h"
 #include "safeinput.h"
-#include <Windows.h>
+#include <conio.h>
 
 #define LAMP "CURRENTLY LAMP IS: "
 
@@ -91,7 +91,7 @@ void AddRemoveAccess(CardLista *state)
             int sel = 0;
             while (loop)
             {
-                GetInputInt("\nEnter 1 for access, 2 for no access ", &sel);
+                GetInputInt("Enter 1 for access, 2 for no access ", &sel);
                 if (sel == 1)
                 {
                     p->hasAccess = 1;
@@ -146,7 +146,7 @@ void FakeScan(CardLista *state)
 {
     int cardNo = 0, loop = 1;
     Card *p;
-    char c[10];
+    char c[100];
     printf("Please scan card to enter or X to go back to menu\n");
     printf("%sOff", LAMP);
     GetInput("\n", c, sizeof(c));
@@ -230,13 +230,13 @@ void ListAllCards(CardLista *state)
         }
 
     printf("Press key to continue\n");
-    _getch();
+    printf("%c", getch());
 }
 
 void ListLoggedIn(CardLista *state)
 {
     int i = 1;
-    printf("\nListing logged in cards\n");
+    printf("\nLogged in cards\n");
     for (i = 0; i < state->antal; i++)
     {
         if (state->cards[i].isLoggedIn == 1)
