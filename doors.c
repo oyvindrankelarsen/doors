@@ -153,7 +153,7 @@ void FakeScan(CardLista *state)
 
     while (loop)
     {
-        if (c[0] == 'X') // först kolla X
+        if (c[0] == 'X')
         {
             AdminMenu(state);
             loop = 0;
@@ -164,10 +164,6 @@ void FakeScan(CardLista *state)
             loop = 0;
         }
     }
-    //  while (!(GetInputInt("\n", &cardNo)))
-    //  {
-    //      printf("Please enter only digits\n");
-    //  }
 
     for (int i = 0; i < state->antal; i++)
     {
@@ -227,16 +223,11 @@ void InputCard(Card *p, CardLista *state)
 
 void ListAllCards(CardLista *state)
 {
-    if (state->antal == 0)
-        printf("No card in the system\n\n");
-    else
-    {
-        printf("\nAll cards in the system\n");
+        printf("\nAll cards in system\n");
         for (int i = 0; i < state->antal; i++)
         {
             PrintCard(&state->cards[i]);
         }
-    }
 
     printf("Press key to continue\n");
     _getch();
@@ -251,8 +242,6 @@ void ListLoggedIn(CardLista *state)
         if (state->cards[i].isLoggedIn == 1)
             PrintCard(&state->cards[i]);
     }
-    if (state->cards[i].isLoggedIn == 0)
-        printf("No logged in cards\n");
 }
 
 void PrintCard(Card *p)

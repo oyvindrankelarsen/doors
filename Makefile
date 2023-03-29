@@ -1,6 +1,6 @@
 PROG=doors.exe
 CC=gcc -std=c99
-CFLAGS=-g -Wall 
+CFLAGS=-g -Wall -Werror
 
 DEPS = doors.h  safeinput.h
 OBJ = doors.o  safeinput.o
